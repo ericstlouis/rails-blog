@@ -1,10 +1,14 @@
 <h1>
-  hello, This is a Blog
+  Rails Blog
 </h1>
 
 <% @blogpost.each do |post| %>
-  <div>
+  <div class='border-2 rounded my-3'>
     <h2><%= link_to post.title, blogpost_path(post.id) %></h2>
     <%= post.body %>
+    <br>
+    <% if post.draft? %>
+      <%= "Is this in draft? " + (post.draft? ? "Yes" : "No") %>
+    <% end %>
   </div>
 <% end %>

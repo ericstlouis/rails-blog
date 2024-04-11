@@ -11,22 +11,24 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class='prose mx-auto'>
+  <body class='!no-underline mx-auto prose'>
     <p class="notice"><%= notice %></p>
     <p class="alert"><%= alert %></p>
-
-    <div>
-      <% if user_signed_in? %>
-        <%= link_to "Profile", edit_user_registration_path %>
-        <%= link_to "create new blog post", new_blogpost_path%>
-        <%= button_to "log out", destroy_user_session_path, method: :delete %>
-      <% else %>
-        <%= link_to "log in", new_user_session_path %>
-        <br>
-        <%= link_to "sign up", new_user_registration_path %>
-      <% end %>
+    <div class='flex justify-between !no-underline'>
+      <%= link_to "Home", root_path %>
+      <div>
+        <% if user_signed_in? %>
+          <%= link_to "Profile", edit_user_registration_path %>
+          <%= button_to "log out", destroy_user_session_path, method: :delete %>
+        <% else %>
+          <%= link_to "log in", new_user_session_path %>
+          <%= link_to "sign up", new_user_registration_path %>
+        <% end %>
+      </div>
     </div>
-
     <%= yield %>
+    <div class="border-1 p-4">
+      <%= link_to "create new blog post", new_blogpost_path if user_signed_in? %>
+    </div>
   </body>
 </html>

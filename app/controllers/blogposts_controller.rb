@@ -1,6 +1,7 @@
 class BlogpostsController < ApplicationController
   before_action :authenticate_user!, except: %i[index show]
   before_action :set_blog_post, except: %i[index new create]
+  before_action :authorize_user!, only: %i[edit update destroy]
 
   def index
     @blogpost = Blogpost.all
@@ -13,11 +14,11 @@ class BlogpostsController < ApplicationController
   end
 
   def new
-    @blogpost = Blogpost.new
+    @blogpost = current_user.blogposts.build
   end
 
   def create
-    @blogpost = Blogpost.new(blogpost_params)
+    @blogpost = current_user.blogposts.build(blogpost_params)
     if @blogpost.save
       redirect_to @blogpost, notice: "Blog post created successfully!"
     else
@@ -50,12 +51,26 @@ class BlogpostsController < ApplicationController
   private
 
   def blogpost_params
-    params.require(:blogpost).permit(:title, :body)
+    params.require(:blogpost).permit(:title, :body, :is_draft, :user_id)
   end
 
   def set_blog_post
-    @blogpost = Blogpost.find(params[:id])
+    @blogpost =
+      (
+        if user_signed_in?
+          Blogpost.find(params[:id])
+        else
+          Blogpost.draft.find(params[:id])
+        end
+      )
   rescue ActiveRecord::RecordNotFound
     redirect_to root_path
+  end
+
+  def authorize_user!
+    unless current_user == @blogpost.user
+      redirect_to root_path,
+                  alert: "You are not authorized to perform this action."
+    end
   end
 end

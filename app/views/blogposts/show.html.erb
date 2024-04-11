@@ -1,6 +1,9 @@
 <h1>this is the show page</h1>
 
 <h2><%= @blogpost.title %></h2>
-<%= @blogpost.body%>
-
-<%= link_to "edit blog post", edit_blogpost_path(@blogpost) if user_signed_in? %>
+<%= @blogpost.body %>
+<br>
+<%# this isnt working %>
+<% if @blogpost.blog_user?(current_user)  %>
+  <%= link_to "edit blog post", edit_blogpost_path(@blogpost)%>
+<% end %>
